@@ -1,16 +1,16 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const { getReply, isOffline } = require('./chatbot');
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const { getReply, isOffline } = require("./chatbot");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 const visitors = new Set();
-const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const indexHtml = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
 
 function parseJSONBody(req, callback) {
-  let body = '';
-  req.on('data', chunk => { body += chunk.toString(); });
-  req.on('end', () => {
+  let body = "";
+  req.on("data", chunk => { body += chunk.toString(); });
+  req.on("end", () => {
     try {
       callback(null, body ? JSON.parse(body) : {});
     } catch (error) {
@@ -20,11 +20,11 @@ function parseJSONBody(req, callback) {
 }
 
 const server = http.createServer((req, res) => {
-  if (req.method === 'POST' && req.url === '/reply') {
+  if (req.method === "POST" && req.url === "/reply") {
     parseJSONBody(req, (err, payload) => {
       if (err) {
-        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
-        res.end(JSON.stringify({ error: '无效 JSON 请求体' }));
+        res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ error: "无效 JSON 请求体" }));
         return;
       }
 
@@ -42,20 +42,20 @@ const server = http.createServer((req, res) => {
         knownVisitor
       });
 
-      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
       res.end(JSON.stringify({ reply }));
     });
     return;
   }
 
-  if (req.method === 'GET' && req.url === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  if (req.method === "GET" && req.url === "/") {
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end(indexHtml);
     return;
   }
 
-  res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
-  res.end(JSON.stringify({ error: 'Not found' }));
+  res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
+  res.end(JSON.stringify({ error: "Not found" }));
 });
 
 server.listen(PORT, () => {
