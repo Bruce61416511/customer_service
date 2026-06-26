@@ -4,6 +4,18 @@ import os
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# 如果 8080 端口已被占用，先杀掉
+result = subprocess.run(
+    ["netstat", "-ano"],
+    capture_output=True, text=True, encoding="utf-8", errors="replace"
+)
+for line in result.stdout.splitlines():
+    if ":8080" in line and "LISTENING" in line:
+        pid = line.strip().split()[-1]
+        print(f"端口 8080 已被 PID {pid} 占用，正在终止...")
+        subprocess.run(["taskkill", "/F", "/PID", pid], capture_output=True)
+        print("已释放端口。")
+
 print("正在启动智能客服服务...")
 p = subprocess.Popen(
     ["C:\\Program Files\\nodejs\\node.exe", "server.js"],
