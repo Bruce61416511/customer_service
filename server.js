@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const { getReply, isOffline } = require("./chatbot");
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 const visitors = new Set();
 const indexHtml = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
 
